@@ -32,9 +32,9 @@ const Expense = () => {
 
             if (response.data) {
                 console.log("Expense data fetched:", response.data);
-                const formatted = Array.isArray(response.data)
-                    ? response.data : [response.data];
-                setExpenseData(formatted);
+                // Extract the expenses array from the response
+                const expenses = response.data.expenses || [];
+                setExpenseData(expenses);
             }
         } catch (error) {
             console.error("Error fetching expense data:", error);
@@ -65,18 +65,16 @@ const Expense = () => {
 
             console.log("📦 Sending to backend:", {
                 category,
-                amount,
+                amount: Number(amount),
                 date,
-                icon,
-                type: "expense"
+                icon
             });
 
             await axiosInstance.post(API_PATHS.EXPENSE.ADD_EXPENSE, {
                 category,
-                amount,
+                amount: Number(amount),
                 date,
-                icon,
-                type: "expense"
+                icon
             })
 
             setOpenAddExpenseModal(false);

@@ -6,7 +6,12 @@ const ExpenseSchema = new mongoose.Schema({
     icon: { type: String },
     category: { type: String, required: true },
     amount: { type: Number, required: true },
-    date: { type: Date, dafault: Date.now },
+    date: { type: Date, default: Date.now },
 }, { timestamps: true })
+
+// Add indexes for better query performance
+ExpenseSchema.index({ userId: 1, date: -1 });
+ExpenseSchema.index({ userId: 1, category: 1 });
+ExpenseSchema.index({ userId: 1, amount: -1 });
 
 module.exports = mongoose.model("Expense", ExpenseSchema);

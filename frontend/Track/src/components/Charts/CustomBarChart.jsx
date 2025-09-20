@@ -40,7 +40,7 @@ const CustomBarChart = ({ data }) => {
                         activeStyle={{ fill: "green" }}
                     >
                         {data.map((entry, index) => (
-                            <Cell key={index} fill={getBarColor(index)} />
+                            <Cell key={`cell-${index}-${entry.month || index}`} fill={getBarColor(index)} />
                         ))}
                     </Bar>
                 </BarChart>

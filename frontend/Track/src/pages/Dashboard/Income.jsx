@@ -29,9 +29,9 @@ const Income = () => {
 
             if (response.data) {
                 console.log("Income data fetched:", response.data);
-                const formatted = Array.isArray(response.data)
-                    ? response.data : [response.data];
-                setIncomeData(formatted);
+                // Extract the incomes array from the response
+                const incomes = response.data.incomes || [];
+                setIncomeData(incomes);
             }
         } catch (error) {
             console.error("Error fetching income data:", error);
@@ -61,10 +61,9 @@ const Income = () => {
         try {
             await axiosInstance.post(API_PATHS.INCOME.ADD_INCOME, {
                 source,
-                amount,
+                amount: Number(amount),
                 date,
-                icon,
-                type: "income"
+                icon
             })
 
             setOpenAddIncomeModal(false);

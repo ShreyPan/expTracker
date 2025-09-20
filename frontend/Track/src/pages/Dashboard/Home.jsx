@@ -32,6 +32,7 @@ const Home = () => {
             const response = await axiosInstance.get(`${API_PATHS.DASHBOARD.GET_DATA}`)
 
             if (response.data) {
+                console.log("Dashboard data received:", response.data);
                 setDashboardData(response.data);
             }
         } catch (error) {

@@ -1,16 +1,35 @@
 const express = require("express");
 const upload = require("../middleware/uploadMiddleware")
 const { protect } = require("../middleware/authMiddleware");
-const { registerUser, loginUser, getUserInfo } = require("../controllers/authController");
+const { validateRegister, validateLogin, validateUpdateProfile, validateChangePassword } = require("../middleware/validation");
+const {
+    registerUser,
+    loginUser,
+    getUserInfo,
+    refreshToken,
+    updateProfile,
+    changePassword,
+    uploadProfileImage
+} = require("../controllers/authController");
 
 const router = express.Router();
 
-router.post("/register", registerUser);
+router.post("/register", validateRegister, registerUser);
 
-router.post("/login", loginUser);
+router.post("/login", validateLogin, loginUser);
 
 router.get("/getUser", protect, getUserInfo);
 
+router.post("/refresh-token", refreshToken);
+
+// Profile management routes
+router.put("/update-profile", protect, validateUpdateProfile, updateProfile);
+
+router.put("/change-password", protect, validateChangePassword, changePassword);
+
+router.post("/upload-profile-image", protect, upload.single("image"), uploadProfileImage);
+
+// Legacy upload image route (keep for backward compatibility)
 router.post("/upload-image", upload.single("image"), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ message: "No file uploaded" });

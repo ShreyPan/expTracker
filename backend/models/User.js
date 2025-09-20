@@ -22,5 +22,7 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password);
 }
 
+// Email already has unique: true, no need for explicit index
+
 module.exports = mongoose.model("User", UserSchema);
 

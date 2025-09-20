@@ -9,4 +9,9 @@ const IncomeSchema = new mongoose.Schema({
     date: { type: Date, default: Date.now },
 }, { timestamps: true })
 
+// Add indexes for better query performance
+IncomeSchema.index({ userId: 1, date: -1 });
+IncomeSchema.index({ userId: 1, source: 1 });
+IncomeSchema.index({ userId: 1, amount: -1 });
+
 module.exports = mongoose.model("Income", IncomeSchema);

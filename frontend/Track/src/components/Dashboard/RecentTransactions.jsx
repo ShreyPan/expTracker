@@ -17,17 +17,23 @@ const RecentTransactions = ({ transactions, onSeeMore }) => {
             </div>
 
             <div className="mt-6">
-                {transactions?.slice(0, 5).map((item) => (
-                    <TransactionInfoCard
-                        key={item._id}
-                        title={item.type == 'expense' ? item.category : item.source}
-                        icon={item.icon}
-                        date={moment(item.date).format("Do MMM YYYY")}
-                        amount={item.amount}
-                        type={item.type || (item.source ? "income" : "expense")}
-                        hideDeleteBtn
-                    />
-                ))}
+                {transactions && transactions.length > 0 ? (
+                    transactions.slice(0, 5).map((item) => (
+                        <TransactionInfoCard
+                            key={item._id}
+                            title={item.type == 'expense' ? item.category : item.source}
+                            icon={item.icon}
+                            date={moment(item.date).format("Do MMM YYYY")}
+                            amount={item.amount}
+                            type={item.type || (item.source ? "income" : "expense")}
+                            hideDeleteBtn
+                        />
+                    ))
+                ) : (
+                    <div className="text-center text-gray-500 py-8">
+                        <p>No recent transactions found</p>
+                    </div>
+                )}
             </div>
         </div>
     )

@@ -3,6 +3,7 @@ import { prepareExpenseBarChartData } from '../../utils/helper';
 import CustomBarChart from '../Charts/CustomBarChart';
 
 const Last30DaysExpenses = ({ data }) => {
+    console.log("Last30DaysExpenses received:", data);
 
     const [charData, setCharData] = useState(data);
 
@@ -19,7 +20,13 @@ const Last30DaysExpenses = ({ data }) => {
                 <h5 className="text-lg">Last 30 Days Expenses</h5>
             </div>
 
-            <CustomBarChart data={charData} />
+            {charData && charData.length > 0 ? (
+                <CustomBarChart data={charData} />
+            ) : (
+                <div className="text-center text-gray-500 py-16">
+                    <p>No expense data available for the last 30 days</p>
+                </div>
+            )}
         </div>
     )
 }

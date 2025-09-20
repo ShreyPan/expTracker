@@ -37,15 +37,16 @@ const Login = () => {
                 email,
                 password
             })
-            const { token, user } = response.data;
+            const { token, accessToken, user } = response.data;
+            const authToken = token || accessToken;
 
-            if (token) {
-                localStorage.setItem("token", token);
+            if (authToken) {
+                localStorage.setItem("token", authToken);
                 updateUser(user);
                 navigate("/dashboard");
             }
         } catch (error) {
-            if (error.response && error.response.data.message) {
+            if (error.response && error.response.data && error.response.data.message) {
                 setError(error.response.data.message);
             }
             else {

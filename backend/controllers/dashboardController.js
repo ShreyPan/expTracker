@@ -6,6 +6,7 @@ const { Transaction } = require("mongodb");
 exports.getDashboardData = async (req, res) => {
     try {
         const userId = req.user.id;
+        console.log("Dashboard API called for user:", userId);
         const userObjectId = new Types.ObjectId(String(userId));
 
         const totalIncome = await Income.aggregate([
@@ -18,26 +19,48 @@ exports.getDashboardData = async (req, res) => {
             { $group: { _id: null, total: { $sum: "$amount" } } }
         ]);
 
-        const last60DaysIncomeTransactions = await Income.find({
-            userId,
-            date: { $gte: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000) }
-        }).sort({ date: -1 });
+        // Get the most recent income transactions (up to 10) regardless of date
+        const recentIncomeTransactions = await Income.find({ userId })
+            .sort({ date: -1 })
+            .limit(10);
 
-        const incomeLast60Days = last60DaysIncomeTransactions.reduce(
+        console.log("Recent income transactions count:", recentIncomeTransactions.length);
+
+        // Calculate total for these transactions
+        const incomeLast60Days = recentIncomeTransactions.reduce(
             (sum, transaction) => sum + transaction.amount, 0
         );
 
-        const last30DaysExpenseTransactions = await Expense.find({
-            userId,
-            date: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }
-        }).sort({ date: -1 });
+        // Get the most recent expense transactions (up to 10) regardless of date
+        const recentExpenseTransactions = await Expense.find({ userId })
+            .sort({ date: -1 })
+            .limit(10);
 
-        const expenseLast30Days = last30DaysExpenseTransactions.reduce(
+        console.log("Recent expense transactions count:", recentExpenseTransactions.length);
+
+        const expenseLast30Days = recentExpenseTransactions.reduce(
             (sum, transaction) => sum + transaction.amount, 0
         );
 
         const recentIncomeTxns = await Income.find({ userId }).sort({ date: -1 }).limit(5);
         const recentExpenseTxns = await Expense.find({ userId }).sort({ date: -1 }).limit(5);
+
+        console.log("Recent income transactions count:", recentIncomeTxns.length);
+        console.log("Recent expense transactions count:", recentExpenseTxns.length);
+
+        // Let's also check all income data to see dates
+        const allIncome = await Income.find({ userId }).sort({ date: -1 });
+        const allExpenses = await Expense.find({ userId }).sort({ date: -1 });
+        console.log("Total income records:", allIncome.length);
+        console.log("Total expense records:", allExpenses.length);
+        if (allIncome.length > 0) {
+            console.log("Newest income date:", allIncome[0].date);
+            console.log("Oldest income date:", allIncome[allIncome.length - 1].date);
+        }
+        if (allExpenses.length > 0) {
+            console.log("Newest expense date:", allExpenses[0].date);
+            console.log("Oldest expense date:", allExpenses[allExpenses.length - 1].date);
+        }
 
         const formattedIncomeTxns = recentIncomeTxns.map(txn => ({
             ...txn.toObject(),
@@ -60,11 +83,11 @@ exports.getDashboardData = async (req, res) => {
             totalExpense: totalExpense[0]?.total || 0,
             last30DaysExpenses: {
                 total: expenseLast30Days,
-                transactions: last30DaysExpenseTransactions
+                transactions: recentExpenseTransactions
             },
             last60DaysIncome: {
                 total: incomeLast60Days,
-                transactions: last60DaysIncomeTransactions,
+                transactions: recentIncomeTransactions,
             },
             recentTransactions: lastTransactions
         });

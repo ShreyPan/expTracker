@@ -4,6 +4,7 @@ import CustomPieChart from './CustomPieChart'
 const COLORS = ["#875cf5", "#fa2c37", "#ff6900", "#4f39f6"];
 
 const RecentIncomeWithChart = ({ data, totalIncome }) => {
+    console.log("RecentIncomeWithChart received:", data, "totalIncome:", totalIncome);
 
     const [chartData, setChartData] = useState([]);
 
@@ -26,13 +27,19 @@ const RecentIncomeWithChart = ({ data, totalIncome }) => {
                 <h5 className="text-lg">Last 60 Days Income</h5>
             </div>
 
-            <CustomPieChart
-                data={chartData}
-                label="Total Income"
-                totalAmount={`$${totalIncome}`}
-                showTextAnchor
-                colors={COLORS}
-            />
+            {chartData && chartData.length > 0 ? (
+                <CustomPieChart
+                    data={chartData}
+                    label="Total Income"
+                    totalAmount={`$${totalIncome}`}
+                    showTextAnchor
+                    colors={COLORS}
+                />
+            ) : (
+                <div className="text-center text-gray-500 py-16">
+                    <p>No income data available for the last 60 days</p>
+                </div>
+            )}
         </div>
     )
 }
