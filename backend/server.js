@@ -39,9 +39,22 @@ const authLimiter = rateLimit({
 // Temporarily disable rate limiting for development
 // app.use(limiter);
 
+// CORS configuration - allows both development and production origins
+const allowedOrigins = [
+    "http://localhost:5173", 
+    "http://localhost:5174", 
+    "http://localhost:5175", 
+    "http://localhost:3000"
+];
+
+// Add CLIENT_URL from environment if it exists
+if (process.env.CLIENT_URL) {
+    allowedOrigins.push(process.env.CLIENT_URL);
+}
+
 app.use(
     cors({
-        origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://localhost:3000"],
+        origin: allowedOrigins,
         methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
         credentials: true,
@@ -54,6 +67,20 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 connectDB();
+
+// Health check endpoint for deployment services
+app.get('/', (req, res) => {
+    res.status(200).json({ 
+        message: 'ExpTracker Backend API is running successfully!',
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        version: '1.0.0'
+    });
+});
+
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
+});
 
 // Temporarily disable auth rate limiting for development
 app.use("/api/v1/auth", authRoutes);
