@@ -41,9 +41,9 @@ const authLimiter = rateLimit({
 
 // CORS configuration - allows both development and production origins
 const allowedOrigins = [
-    "http://localhost:5173", 
-    "http://localhost:5174", 
-    "http://localhost:5175", 
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:5175",
     "http://localhost:3000"
 ];
 
@@ -70,7 +70,7 @@ connectDB();
 
 // Health check endpoint for deployment services
 app.get('/', (req, res) => {
-    res.status(200).json({ 
+    res.status(200).json({
         message: 'ExpTracker Backend API is running successfully!',
         status: 'healthy',
         timestamp: new Date().toISOString(),
