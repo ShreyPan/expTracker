@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: exptracker-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+    autoDeploy: false
+    rootDir: ./backend
+    
+  - type: web
+    name: exptracker-frontend
+    env: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://exptracker-backend-91h0.onrender.com
+      - key: VITE_NODE_ENV
+        value: production
+    autoDeploy: false
+    rootDir: ./frontend/Track
