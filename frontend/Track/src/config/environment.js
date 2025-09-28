@@ -4,7 +4,7 @@ const config = {
         API_BASE_URL: "http://localhost:8001",
     },
     production: {
-        API_BASE_URL: import.meta.env.VITE_API_BASE_URL || "https://your-backend-domain.railway.app",
+        API_BASE_URL: import.meta.env.VITE_API_BASE_URL || "https://exptracker-backend-91h0.onrender.com",
     }
 };
 
