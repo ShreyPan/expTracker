@@ -10,6 +10,38 @@ import axiosInstance from '../../utils/axiosInstance';
 import { API_PATHS } from '../../utils/apiPaths';
 import uploadImage from '../../utils/uploadImage';
 import { toast } from 'react-hot-toast';
+import { LuMail, LuShieldCheck, LuSparkles, LuUser } from 'react-icons/lu';
+
+const formatDisplayDate = (value) => {
+    if (!value) return 'Not available';
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return 'Not available';
+
+    return date.toLocaleDateString(undefined, {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+    });
+};
+
+const getPasswordStrength = (password = '') => {
+    let score = 0;
+
+    if (password.length >= 6) score += 1;
+    if (/[A-Z]/.test(password)) score += 1;
+    if (/[0-9]/.test(password)) score += 1;
+    if (/[^A-Za-z0-9]/.test(password)) score += 1;
+
+    return Math.min(score, 4);
+};
+
+const strengthMeta = [
+    { label: 'Very weak', color: 'bg-red-400' },
+    { label: 'Weak', color: 'bg-orange-400' },
+    { label: 'Good', color: 'bg-yellow-400' },
+    { label: 'Strong', color: 'bg-emerald-500' },
+];
 
 const Profile = () => {
     const { user, updateUser } = useContext(UserContext);
@@ -27,6 +59,7 @@ const Profile = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [isPasswordLoading, setIsPasswordLoading] = useState(false);
+    const [lastUpdatedAt, setLastUpdatedAt] = useState(null);
 
     const openEditProfileModal = () => {
         setFullName(user?.fullName || '');
@@ -79,6 +112,7 @@ const Profile = () => {
 
             if (response?.data?.user) {
                 updateUser(response.data.user);
+                setLastUpdatedAt(new Date().toISOString());
                 toast.success('Profile updated successfully.');
                 setTimeout(() => {
                     setIsEditProfileOpen(false);
@@ -136,6 +170,7 @@ const Profile = () => {
                 newPassword,
             });
 
+            setLastUpdatedAt(new Date().toISOString());
             toast.success('Password updated successfully.');
             setTimeout(() => {
                 setIsChangePasswordOpen(false);
@@ -152,84 +187,113 @@ const Profile = () => {
         }
     };
 
+    const passwordStrength = getPasswordStrength(newPassword);
+    const strengthConfig = strengthMeta[Math.max(passwordStrength - 1, 0)];
+
     return (
         <DashboardLayout activeMenu="Profile">
-            <div className="my-5 mx-auto">
-                <div className="max-w-4xl mx-auto">
-                    <div className="card">
-                        {/* Header */}
-                        <div className="bg-gradient-to-r from-[#875cf5] to-purple-600 px-6 py-8 rounded-2xl mb-6">
-                            <div className="flex items-center space-x-4">
-                                <div className="relative">
-                                    {user?.profileImageUrl ? (
-                                        <img
-                                            src={fixImageUrl(user?.profileImageUrl)}
-                                            alt="Profile"
-                                            className="w-20 h-20 rounded-full border-4 border-white object-cover"
-                                        />
-                                    ) : (
-                                        <DefaultAvatar size="w-20 h-20" textSize="text-xl" />
-                                    )}
-                                </div>
+            <div className="my-6 mx-auto max-w-6xl">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <section className="card lg:col-span-1 relative overflow-hidden transition-all duration-300 hover:shadow-lg">
+                        <div className="absolute -top-16 -right-16 w-44 h-44 rounded-full bg-purple-100/80" />
+                        <div className="absolute -bottom-20 -left-14 w-36 h-36 rounded-full bg-purple-50" />
+
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-4 mb-5">
+                                {user?.profileImageUrl ? (
+                                    <img
+                                        src={fixImageUrl(user?.profileImageUrl)}
+                                        alt="Profile"
+                                        className="w-20 h-20 rounded-full border-4 border-white object-cover shadow-md"
+                                    />
+                                ) : (
+                                    <DefaultAvatar size="w-20 h-20" textSize="text-xl" />
+                                )}
+
                                 <div>
-                                    <h1 className="text-2xl font-bold text-white">{user?.fullName}</h1>
-                                    <p className="text-purple-100">{user?.email}</p>
+                                    <h1 className="text-xl font-bold text-gray-900">{user?.fullName}</h1>
+                                    <p className="text-sm text-gray-600 break-all">{user?.email}</p>
                                 </div>
                             </div>
+
+                            <div className="space-y-3 mb-6">
+                                <div className="flex items-center justify-between text-sm">
+                                    <span className="text-gray-500">Member since</span>
+                                    <span className="font-medium text-gray-800">{formatDisplayDate(user?.createdAt)}</span>
+                                </div>
+                                <div className="flex items-center justify-between text-sm">
+                                    <span className="text-gray-500">Last update</span>
+                                    <span className="font-medium text-gray-800">{formatDisplayDate(lastUpdatedAt || user?.updatedAt)}</span>
+                                </div>
+                                <div className="flex items-center justify-between text-sm">
+                                    <span className="text-gray-500">Status</span>
+                                    <span className="text-xs font-semibold text-purple-700 bg-purple-100 px-2.5 py-1 rounded-full">Active</span>
+                                </div>
+                            </div>
+
+                            <button
+                                className="add-btn add-btn-fill w-full justify-center hover:bg-purple-600 transition-colors"
+                                onClick={openEditProfileModal}
+                            >
+                                <LuUser className="text-sm" />
+                                Edit Profile
+                            </button>
                         </div>
+                    </section>
 
-                        {/* Content */}
-                        <div className="">
-                            <div className="mb-8">
-                                <div className="flex items-center justify-between mb-6">
-                                    <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-                                        Profile Information
-                                    </h2>
-                                    <button
-                                        className="add-btn add-btn-fill hover:bg-purple-600 transition-colors"
-                                        onClick={openEditProfileModal}
-                                    >
-                                        Edit Profile
-                                    </button>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="card">
-                                        <label className="block text-sm font-medium text-gray-500 mb-2">
-                                            Full Name
-                                        </label>
-                                        <p className="text-gray-800 font-medium">{user?.fullName}</p>
-                                    </div>
-
-                                    <div className="card">
-                                        <label className="block text-sm font-medium text-gray-500 mb-2">
-                                            Email
-                                        </label>
-                                        <p className="text-gray-800 font-medium">{user?.email}</p>
-                                    </div>
-                                </div>
+                    <div className="lg:col-span-2 space-y-6">
+                        <section className="card transition-all duration-300 hover:shadow-lg">
+                            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+                                <h2 className="text-lg font-semibold text-gray-900">Profile Information</h2>
+                                <span className="text-xs text-purple-700 bg-purple-50 px-2.5 py-1 rounded-full flex items-center gap-1">
+                                    <LuSparkles className="text-xs" />
+                                    Personal details
+                                </span>
                             </div>
 
-                            <div className="mb-8">
-                                <div className="flex items-center justify-between mb-6">
-                                    <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-                                        Password
-                                    </h2>
-                                    <button
-                                        className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors shadow-md"
-                                        onClick={openPasswordModal}
-                                    >
-                                        Update Password
-                                    </button>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-5">
+                                <div className="bg-gray-50 border border-gray-100 rounded-xl p-4">
+                                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-1">Full Name</p>
+                                    <p className="text-gray-900 font-semibold">{user?.fullName}</p>
                                 </div>
-
-                                <div className="card">
-                                    <p className="text-gray-600">
-                                        Click "Update Password" and enter your current password before setting a new one.
+                                <div className="bg-gray-50 border border-gray-100 rounded-xl p-4">
+                                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-1">Email</p>
+                                    <p className="text-gray-900 font-semibold break-all flex items-center gap-2">
+                                        <LuMail className="text-purple-600" />
+                                        {user?.email}
                                     </p>
                                 </div>
                             </div>
-                        </div>
+                        </section>
+
+                        <section className="card transition-all duration-300 hover:shadow-lg">
+                            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+                                <h2 className="text-lg font-semibold text-gray-900">Security</h2>
+                                <button
+                                    className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors shadow-md text-sm font-medium"
+                                    onClick={openPasswordModal}
+                                >
+                                    Update Password
+                                </button>
+                            </div>
+
+                            <div className="pt-5 space-y-4">
+                                <div className="flex items-start gap-3">
+                                    <span className="w-9 h-9 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center">
+                                        <LuShieldCheck />
+                                    </span>
+                                    <div>
+                                        <p className="font-medium text-gray-900">Keep your account secure</p>
+                                        <p className="text-sm text-gray-600">
+                                            Use your current password before setting a new one. Strong passwords include letters, numbers, and symbols.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
+                                    <div className="h-full w-1/2 bg-gradient-to-r from-[#875cf5] to-purple-500 rounded-full" />
+                                </div>
+                            </div>
+                        </section>
                     </div>
                 </div>
             </div>
@@ -283,6 +347,23 @@ const Profile = () => {
                         value={newPassword}
                         onChange={({ target }) => setNewPassword(target.value)}
                     />
+
+                    {newPassword && (
+                        <div className="mb-4">
+                            <div className="flex items-center justify-between mb-2">
+                                <p className="text-xs font-medium text-gray-500">Password Strength</p>
+                                <p className="text-xs font-semibold text-gray-700">{strengthConfig.label}</p>
+                            </div>
+                            <div className="grid grid-cols-4 gap-2">
+                                {[1, 2, 3, 4].map((level) => (
+                                    <span
+                                        key={level}
+                                        className={`h-1.5 rounded-full ${passwordStrength >= level ? strengthConfig.color : 'bg-gray-200'}`}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     <Input
                         label="Confirm New Password"

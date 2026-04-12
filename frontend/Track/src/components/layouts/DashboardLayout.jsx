@@ -7,8 +7,6 @@ const DashboardLayout = ({ children, activeMenu }) => {
 
     const { user } = useContext(UserContext);
 
-    console.log("dash: ", user);
-
     return (
         <div className="">
             <Navbar activeMenu={activeMenu} />
