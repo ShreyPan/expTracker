@@ -1,8 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { LuUser, LuUpload, LuTrash } from 'react-icons/lu'
-import CharAvatar from '../Cards/CharAvatar';
 
-const ProfilePhotoSelector = ({ image, setImage }) => {
+const ProfilePhotoSelector = ({ image, setImage, currentImageUrl = null }) => {
 
     const inputRef = useRef(null);
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -39,12 +38,21 @@ const ProfilePhotoSelector = ({ image, setImage }) => {
 
             {!image ? (
                 <div className="w-20 h-20 flex items-center justify-center bg-purple-100 rounded-full relative">
-                    <LuUser className="text-4xl text-[#875cf5]" />
+                    {currentImageUrl ? (
+                        <img
+                            src={currentImageUrl}
+                            alt="current profile photo"
+                            className="w-20 h-20 rounded-full object-cover"
+                        />
+                    ) : (
+                        <LuUser className="text-4xl text-[#875cf5]" />
+                    )}
 
                     <button
                         type="button"
                         className="w-8 h-8 flex items-center justify-center bg-[#875cf5] text-white rounded-full absolute -bottom-1 -right-1"
                         onClick={onChooseFile}
+                        title={currentImageUrl ? 'Change profile photo' : 'Upload profile photo'}
                     >
                         <LuUpload />
                     </button>

@@ -6,7 +6,9 @@ export const API_PATHS = {
     AUTH: {
         LOGIN: "/api/v1/auth/login",
         REGISTER: "/api/v1/auth/register",
-        GET_USER_INFO: "/api/v1/auth/getUser"
+        GET_USER_INFO: "/api/v1/auth/getUser",
+        UPDATE_PROFILE: "/api/v1/auth/update-profile",
+        CHANGE_PASSWORD: "/api/v1/auth/change-password"
     },
     DASHBOARD: {
         GET_DATA: "/api/v1/dashboard",
@@ -22,6 +24,7 @@ export const API_PATHS = {
         DELETE_EXPENSE: (expenseId) => `/api/v1/expense/${expenseId}`,
     },
     IMAGE: {
-        UPLOAD_IMAGE: "/api/v1/auth/upload-image"
+        UPLOAD_IMAGE: "/api/v1/auth/upload-image",
+        UPLOAD_PROFILE_IMAGE: "/api/v1/auth/upload-profile-image"
     }
 }
