@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6'
 
-const Input = ({ value, onChange, placeholder, type, label }) => {
+const Input = ({ value, onChange, placeholder, type, label, disabled = false }) => {
 
     const [showPassword, setShowPassword] = useState(false);
     const toggleShowPassword = () => {
@@ -19,6 +19,7 @@ const Input = ({ value, onChange, placeholder, type, label }) => {
                     className="w-full bg-transparent outline-none"
                     value={value}
                     onChange={(e) => onChange(e)}
+                    disabled={disabled}
                 />
 
                 {type === "password" && (
@@ -26,14 +27,14 @@ const Input = ({ value, onChange, placeholder, type, label }) => {
                         {showPassword ? (
                             <FaRegEye
                                 size={22}
-                                className="text-primary cursor-pointer"
-                                onClick={() => toggleShowPassword()}
+                                className={`text-primary ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                onClick={() => !disabled && toggleShowPassword()}
                             />
                         ) : (
                             <FaRegEye
                                 size={22}
-                                className="text-slate-400 cursor-pointer"
-                                onClick={() => toggleShowPassword()}
+                                className={`text-slate-400 ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                onClick={() => !disabled && toggleShowPassword()}
                             />
                         )}
                     </>

@@ -17,6 +17,8 @@ const Signup = () => {
     const [password, setPassword] = useState("");
 
     const [error, setError] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showProgressOverlay, setShowProgressOverlay] = useState(false);
 
     const { updateUser } = useContext(UserContext);
 
@@ -24,6 +26,8 @@ const Signup = () => {
 
     const handleSignup = async (e) => {
         e.preventDefault();
+
+        if (isSubmitting) return;
 
         let profileImageUrl = "";
 
@@ -41,6 +45,11 @@ const Signup = () => {
         }
 
         setError("");
+        setIsSubmitting(true);
+
+        const overlayTimer = setTimeout(() => {
+            setShowProgressOverlay(true);
+        }, 600);
 
         try {
 
@@ -70,20 +79,24 @@ const Signup = () => {
             } else {
                 setError("Something went wrong. Please try again.");
             }
+        } finally {
+            clearTimeout(overlayTimer);
+            setShowProgressOverlay(false);
+            setIsSubmitting(false);
         }
     }
 
     return (
-        <AuthLayout>
+        <AuthLayout showProgressOverlay={showProgressOverlay}>
             <div className="lg:w[100%] h-auto md:h-full mt-10 md:mt-0 flex flex-col justify-center">
                 <h3 className="text-xl font-semibold text-black">Create an Account</h3>
                 <p className="text-xs text-slate-700 mt-[5px] mb-6">
                     Join us today by entering your details below.
                 </p>
 
-                <form onSubmit={handleSignup}>
+                <form onSubmit={handleSignup} aria-busy={isSubmitting}>
 
-                    <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} />
+                    <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} disabled={isSubmitting} />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Input
@@ -92,6 +105,7 @@ const Signup = () => {
                             label="Full Name"
                             placeholder="John"
                             type="text"
+                            disabled={isSubmitting}
                         />
 
                         <Input
@@ -100,6 +114,7 @@ const Signup = () => {
                             label="Email Address"
                             placeholder="abc@example.com"
                             type="text"
+                            disabled={isSubmitting}
                         />
 
                         <div className="col-span-2">
@@ -109,19 +124,27 @@ const Signup = () => {
                                 label="Password"
                                 placeholder="Min 6 Characters"
                                 type="password"
+                                disabled={isSubmitting}
                             />
                         </div>
                     </div>
 
                     {error && <p className="text-red-500 text-xs pb-2.5">{error}</p>}
 
-                    <button type="submit" className="btn-primary">
-                        SINGUP
+                    <button type="submit" className="btn-primary" disabled={isSubmitting}>
+                        {isSubmitting ? (
+                            <span className="flex items-center justify-center gap-2">
+                                <span className="auth-spinner" />
+                                Creating account...
+                            </span>
+                        ) : (
+                            'SIGNUP'
+                        )}
                     </button>
 
                     <p className="text-[13px] text-slate-800 mt-3">
                         Already have an account?{" "}
-                        <Link className="font-medium text-[#875cf5] underline" to="/login">
+                        <Link className={`font-medium text-[#875cf5] underline ${isSubmitting ? 'pointer-events-none opacity-60' : ''}`} to="/login">
                             Login
                         </Link>
                     </p>

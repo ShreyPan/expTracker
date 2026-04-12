@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { LuUser, LuUpload, LuTrash } from 'react-icons/lu'
 
-const ProfilePhotoSelector = ({ image, setImage, currentImageUrl = null }) => {
+const ProfilePhotoSelector = ({ image, setImage, currentImageUrl = null, disabled = false }) => {
 
     const inputRef = useRef(null);
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -23,6 +23,7 @@ const ProfilePhotoSelector = ({ image, setImage, currentImageUrl = null }) => {
     }
 
     const onChooseFile = () => {
+        if (disabled) return;
         inputRef.current.click();
     }
 
@@ -34,6 +35,7 @@ const ProfilePhotoSelector = ({ image, setImage, currentImageUrl = null }) => {
                 ref={inputRef}
                 onChange={handleImageChange}
                 className="hidden"
+                disabled={disabled}
             />
 
             {!image ? (
@@ -53,6 +55,7 @@ const ProfilePhotoSelector = ({ image, setImage, currentImageUrl = null }) => {
                         className="w-8 h-8 flex items-center justify-center bg-[#875cf5] text-white rounded-full absolute -bottom-1 -right-1"
                         onClick={onChooseFile}
                         title={currentImageUrl ? 'Change profile photo' : 'Upload profile photo'}
+                        disabled={disabled}
                     >
                         <LuUpload />
                     </button>
@@ -68,6 +71,7 @@ const ProfilePhotoSelector = ({ image, setImage, currentImageUrl = null }) => {
                         type="button"
                         className="w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-full absolute -bottom-1 -right-1"
                         onClick={handleRemoveImage}
+                        disabled={disabled}
                     >
                         <LuTrash />
                     </button>

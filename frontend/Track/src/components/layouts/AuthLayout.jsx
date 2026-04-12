@@ -2,9 +2,9 @@ import React from 'react'
 import CARD_2 from '../../assets/images/card_2.png'
 import { LuTrendingUpDown } from 'react-icons/lu'
 
-const AuthLayout = ({ children }) => {
+const AuthLayout = ({ children, showProgressOverlay = false }) => {
     return (
-        <div className="flex">
+        <div className="flex relative">
             <div className="w-screen h-screen md:w-[60vw] px-12 pt-8 pb-12">
                 <h2 className="text-lg font-medium text-black">
                     Expense Tracker
@@ -30,6 +30,15 @@ const AuthLayout = ({ children }) => {
                     className="w-64 lg:w-[90%] absolute bottom-10 shadow-lg shadow-blue-200"
                 />
             </div>
+
+            {showProgressOverlay && (
+                <div className="absolute inset-0 bg-white/70 backdrop-blur-[1px] z-40 flex items-center justify-center">
+                    <div className="bg-white border border-gray-200 rounded-xl px-5 py-4 shadow-md flex items-center gap-3">
+                        <span className="auth-spinner" />
+                        <p className="text-sm text-gray-700 font-medium">Processing request...</p>
+                    </div>
+                </div>
+            )}
         </div>
 
     )
