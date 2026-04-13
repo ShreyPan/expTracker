@@ -5,11 +5,21 @@ import { LuTrendingUpDown } from 'react-icons/lu'
 const AuthLayout = ({ children, showProgressOverlay = false }) => {
     return (
         <div className="flex relative">
-            <div className="w-screen h-screen md:w-[60vw] px-12 pt-8 pb-12">
-                <h2 className="text-lg font-medium text-black">
-                    Expense Tracker
-                </h2>
-                {children}
+            <div className="w-screen min-h-screen md:w-[60vw] relative overflow-hidden bg-gradient-to-br from-white via-[#fcfbff] to-violet-50 px-6 md:px-12 py-8">
+                <div className="absolute -top-14 -left-16 w-56 h-56 rounded-full bg-purple-100/60 blur-2xl" />
+                <div className="absolute bottom-10 right-10 w-40 h-40 rounded-full bg-violet-100/80 blur-2xl" />
+
+                <div className="relative z-10 max-w-3xl mx-auto h-full flex flex-col">
+                    <h2 className="text-lg font-medium text-black">
+                        Expense Tracker
+                    </h2>
+
+                    <div className="mt-8 md:mt-12 flex-1 flex items-center">
+                        <div className="w-full auth-left-panel">
+                            {children}
+                        </div>
+                    </div>
+                </div>
             </div>
             <div className="hidden md:block w-[40vw] h-screen bg-violet-50 bg-auth-bg-img bg-cover bg-no-repeat bg-center overflow-hidden p-8 relative">
                 <div className="w-48 h-48 rounded-[40px] bg-purple-600 absolute -top-7 -left-5" />

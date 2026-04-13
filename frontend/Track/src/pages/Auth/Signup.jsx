@@ -88,11 +88,17 @@ const Signup = () => {
 
     return (
         <AuthLayout showProgressOverlay={showProgressOverlay}>
-            <div className="lg:w[100%] h-auto md:h-full mt-10 md:mt-0 flex flex-col justify-center">
+            <div className="w-full max-w-xl flex flex-col justify-center">
                 <h3 className="text-xl font-semibold text-black">Create an Account</h3>
                 <p className="text-xs text-slate-700 mt-[5px] mb-6">
                     Join us today by entering your details below.
                 </p>
+
+                <div className="flex flex-wrap gap-2 mb-5">
+                    <span className="auth-chip">Bank-grade auth</span>
+                    <span className="auth-chip">Quick setup</span>
+                    <span className="auth-chip">Insights from day one</span>
+                </div>
 
                 <form onSubmit={handleSignup} aria-busy={isSubmitting}>
 

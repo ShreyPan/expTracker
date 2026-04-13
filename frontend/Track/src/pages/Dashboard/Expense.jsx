@@ -28,10 +28,7 @@ const Expense = () => {
         try {
             const response = await axiosInstance.get(`${API_PATHS.EXPENSE.GET_ALL_EXPENSE}`);
 
-            console.log("response.data", response.data)
-
             if (response.data) {
-                console.log("Expense data fetched:", response.data);
                 // Extract the expenses array from the response
                 const expenses = response.data.expenses || [];
                 setExpenseData(expenses);
@@ -62,14 +59,6 @@ const Expense = () => {
         }
 
         try {
-
-            console.log("📦 Sending to backend:", {
-                category,
-                amount: Number(amount),
-                date,
-                icon
-            });
-
             await axiosInstance.post(API_PATHS.EXPENSE.ADD_EXPENSE, {
                 category,
                 amount: Number(amount),
@@ -111,21 +100,28 @@ const Expense = () => {
     return (
         <DashboardLayout activeMenu="Expense">
             <div className="my-5 mx-auto">
-                <div className="grid grid-cols-1 gap-6">
-                    <div className="">
-                        <ExpenseOverview
+                {loading ? (
+                    <div className="grid grid-cols-1 gap-6">
+                        <div className="skeleton h-80" />
+                        <div className="skeleton h-80" />
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 gap-6">
+                        <div className="">
+                            <ExpenseOverview
+                                transactions={expenseData}
+                                onExpenseIncome={() => setOpenAddExpenseModal(true)}
+                            />
+                        </div>
+
+                        <ExpenseList
                             transactions={expenseData}
-                            onExpenseIncome={() => setOpenAddExpenseModal(true)}
+                            onDelete={(id) => {
+                                setOpenDeleteAlert({ show: true, data: id })
+                            }}
                         />
                     </div>
-
-                    <ExpenseList
-                        transactions={expenseData}
-                        onDelete={(id) => {
-                            setOpenDeleteAlert({ show: true, data: id })
-                        }}
-                    />
-                </div>
+                )}
 
                 <Modal
                     isOpen={openAddExpenseModal}

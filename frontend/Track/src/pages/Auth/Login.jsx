@@ -70,11 +70,17 @@ const Login = () => {
 
     return (
         <AuthLayout showProgressOverlay={showProgressOverlay}>
-            <div className="lg:w-[70%] h-3/4 md:h-full flex flex-col justify-center">
+            <div className="w-full max-w-xl flex flex-col justify-center">
                 <h3 className="text-xl font-semibold text-black">Welcome back</h3>
                 <p className="text-xs text-slate-700 mt-[5px] mb-6">
                     Please enter your login details to login
                 </p>
+
+                <div className="flex flex-wrap gap-2 mb-5">
+                    <span className="auth-chip">Fast login</span>
+                    <span className="auth-chip">Secure session</span>
+                    <span className="auth-chip">Realtime dashboard</span>
+                </div>
 
                 <form onSubmit={handleLogin} aria-busy={isSubmitting}>
                     <Input

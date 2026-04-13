@@ -28,7 +28,6 @@ const Income = () => {
             const response = await axiosInstance.get(`${API_PATHS.INCOME.GET_ALL_INCOME}`);
 
             if (response.data) {
-                console.log("Income data fetched:", response.data);
                 // Extract the incomes array from the response
                 const incomes = response.data.incomes || [];
                 setIncomeData(incomes);
@@ -100,21 +99,28 @@ const Income = () => {
     return (
         <DashboardLayout activeMenu="Income">
             <div className="my-5 mx-auto">
-                <div className="grid grid-cols-1 gap-6">
-                    <div className="">
-                        <IncomeOverview
+                {loading ? (
+                    <div className="grid grid-cols-1 gap-6">
+                        <div className="skeleton h-80" />
+                        <div className="skeleton h-80" />
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 gap-6">
+                        <div className="">
+                            <IncomeOverview
+                                transactions={incomeData}
+                                onAddIncome={() => setOpenAddIncomeModal(true)}
+                            />
+                        </div>
+
+                        <IncomeList
                             transactions={incomeData}
-                            onAddIncome={() => setOpenAddIncomeModal(true)}
+                            onDelete={(id) => {
+                                setOpenDeleteAlert({ show: true, data: id })
+                            }}
                         />
                     </div>
-
-                    <IncomeList
-                        transactions={incomeData}
-                        onDelete={(id) => {
-                            setOpenDeleteAlert({ show: true, data: id })
-                        }}
-                    />
-                </div>
+                )}
 
                 <Modal
                     isOpen={openAddIncomeModal}
