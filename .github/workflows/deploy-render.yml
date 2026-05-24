@@ -1,0 +1,33 @@
+name: Deploy to Render
+
+on:
+  workflow_run:
+    workflows:
+      - CI
+    branches:
+      - main
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Trigger Render deployments
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Trigger backend deploy hook
+        env:
+          RENDER_BACKEND_DEPLOY_HOOK: ${{ secrets.RENDER_BACKEND_DEPLOY_HOOK }}
+        if: env.RENDER_BACKEND_DEPLOY_HOOK != ''
+        run: curl -fsSL -X POST "$RENDER_BACKEND_DEPLOY_HOOK"
+
+      - name: Trigger frontend deploy hook
+        env:
+          RENDER_FRONTEND_DEPLOY_HOOK: ${{ secrets.RENDER_FRONTEND_DEPLOY_HOOK }}
+        if: env.RENDER_FRONTEND_DEPLOY_HOOK != ''
+        run: curl -fsSL -X POST "$RENDER_FRONTEND_DEPLOY_HOOK"

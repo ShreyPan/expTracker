@@ -472,6 +472,18 @@ JWT_REFRESH_SECRET=your_production_refresh_secret
 CLIENT_URL=https://your-frontend-domain.com
 ```
 
+### **GitHub Actions CI/CD**
+This repository now includes GitHub Actions workflows for:
+- CI on every pull request and push to `main`
+- Render deploy triggers after CI passes on `main`
+- Backend and frontend unit tests run as part of CI
+
+To enable deployments, add these repository secrets:
+- `RENDER_BACKEND_DEPLOY_HOOK`
+- `RENDER_FRONTEND_DEPLOY_HOOK`
+
+If you prefer automatic deployment through Render's GitHub integration instead of deploy hooks, you can leave the deploy workflow in place and skip those secrets.
+
 ## 🤝 Contributing
 
 We welcome contributions to ExpTracker! Here's how you can help:
